@@ -6,6 +6,6 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o adres-talk ./
+RUN go build -o adres-talk .
 
-CMD ["./adres-talk $TOKEN"]
+CMD ["sh", "-c", "./adres-talk $TOKEN"]
