@@ -12,7 +12,7 @@ import (
 func main() {
 
 	//Create storagee
-	connStr := "user=postgres dbname=adres-talk password=mysecretpassword sslmode=disable"
+	connStr := "user=postgres dbname=postgres password=mysecretpassword sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)

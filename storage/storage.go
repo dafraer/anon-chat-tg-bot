@@ -24,9 +24,11 @@ func New(db *sql.DB) *Store {
 }
 
 func (s *Store) Init() error {
-	query := `CREATE TABLE IF NOT EXISTS users (
-		id INT PRIMARY KEY,
-		chat_id INT,
+	query := "DROP TABLE users;"
+	s.db.Exec(query)
+	query = `CREATE TABLE IF NOT EXISTS users (
+		id BIGINT PRIMARY KEY,
+		chat_id BIGINT,
 		username TEXT,
 		root BOOL
 	);`
@@ -35,9 +37,9 @@ func (s *Store) Init() error {
 	return err
 }
 
-func (s *Store) SaveUser(User) error {
+func (s *Store) SaveUser(user User) error {
 	query := `INSERT INTO users (id, chat_id, username,  root) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO UPDATE SET chat_id=$2, username=$3, root=$4;`
-	_, err := s.db.Exec(query)
+	_, err := s.db.Exec(query, user.Id, user.ChatId, user.Username, user.Root)
 	return err
 }
 
