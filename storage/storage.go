@@ -47,7 +47,9 @@ func (s *Store) GetUsers() ([]User, error) {
 	rows, err := s.db.Query(query)
 	for rows.Next() {
 		user := User{}
-		rows.Scan(&user)
+		if err := rows.Scan(&user.Id, &user.ChatId, &user.Username, &user.Root); err != nil {
+			return []User{}, err
+		}
 		users = append(users, user)
 	}
 	if err != nil {
