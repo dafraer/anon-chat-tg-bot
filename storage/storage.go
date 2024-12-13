@@ -24,9 +24,7 @@ func New(db *sql.DB) *Store {
 }
 
 func (s *Store) Init() error {
-	query := "DROP TABLE users;"
-	s.db.Exec(query)
-	query = `CREATE TABLE IF NOT EXISTS users (
+	query := `CREATE TABLE IF NOT EXISTS users (
 		id BIGINT PRIMARY KEY,
 		chat_id BIGINT,
 		username TEXT,
