@@ -76,6 +76,7 @@ func main() {
 					if err := storage.SaveUser(user); err != nil {
 						panic(err)
 					}
+					continue
 				}
 			}
 
