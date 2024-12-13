@@ -68,11 +68,15 @@ func main() {
 
 			//check if the message is a command to give root privellege
 			if chatIds[update.Message.From.UserName].Root && update.Message.Text[0] == '*' {
-				nameOfNewRoot := update.Message.Text[1:]
-				user, ok := chatIds[nameOfNewRoot]
+				name := update.Message.Text[2:]
+				user, ok := chatIds[name]
 				if ok {
-					user.Root = true
-					chatIds[nameOfNewRoot] = user
+					if update.Message.Text[1] == '+' {
+						user.Root = true
+					} else {
+						user.Root = false
+					}
+					chatIds[name] = user
 					if err := storage.SaveUser(user); err != nil {
 						panic(err)
 					}
