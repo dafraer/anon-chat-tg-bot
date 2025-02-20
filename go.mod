@@ -1,4 +1,4 @@
-module adres-talk
+module anon-chat-tg-bot
 
 go 1.23.3
 

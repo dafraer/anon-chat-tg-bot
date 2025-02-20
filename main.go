@@ -1,27 +1,23 @@
 package main
 
 import (
-	store "adres-talk/storage"
+	"anon-chat-tg-bot/bot"
+	store "anon-chat-tg-bot/storage"
 	"database/sql"
 	"log"
-	"net/url"
 	"os"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"strconv"
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		panic("Bot token and db uri expected as args")
+	if len(os.Args) < 4 {
+		panic("Bot token, db uri and admin telegram user id expected as args")
 	}
-	//Create storagee
-	serviceURI := os.Args[2]
-
-	conn, _ := url.Parse(serviceURI)
-	conn.RawQuery = "sslmode=verify-ca;sslrootcert=ca.pem"
-
-	db, err := sql.Open("postgres", conn.String())
-
+	//Create storage
+	//default connection string for local postgres:
+	//"user=postgres dbname=postgres password=mysecretpassword sslmode=disable"
+	connStr := os.Args[2]
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,80 +30,18 @@ func main() {
 		panic(err)
 	}
 
-	users, err := storage.GetUsers()
+	//Create the bot
+	adminId, err := strconv.Atoi(os.Args[3])
+	if err != nil {
+		log.Fatalf("Admin user id must be an integer: %v", err)
+	}
+	b, err := bot.New(os.Args[1], storage, int64(adminId))
 	if err != nil {
 		panic(err)
 	}
 
-	chatIds := make(map[string]store.User)
-	for _, u := range users {
-		chatIds[u.Username] = u
-	}
-
-	bot, err := tgbotapi.NewBotAPI(os.Args[1])
-	if err != nil {
-		log.Panic(err)
-	}
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-	updates := bot.GetUpdatesChan(u)
-	for update := range updates {
-		if update.Message != nil && update.Message.IsCommand() {
-			if update.Message.Text == "/start" {
-				root := false
-				if update.Message.From.UserName == "dafraer" {
-					root = true
-				}
-				newUser := store.User{
-					Id:       update.Message.From.ID,
-					ChatId:   update.Message.Chat.ID,
-					Username: update.Message.From.UserName,
-					Root:     root,
-				}
-				if err := storage.SaveUser(newUser); err != nil {
-					panic(err)
-				}
-				chatIds[update.Message.From.UserName] = newUser
-			}
-			continue
-		}
-		if update.Message != nil {
-			log.Printf("username: %s || userId: %d || chatId: %d\n", update.Message.From.UserName, update.Message.From.ID, update.Message.Chat.ID)
-			sendersChatId := update.Message.Chat.ID
-
-			//check if the message is a command to give root privellege
-			if chatIds[update.Message.From.UserName].Root && len(update.Message.Text) > 3 && update.Message.Text[0] == '*' {
-				name := update.Message.Text[2:]
-				user, ok := chatIds[name]
-				if ok {
-					if update.Message.Text[1] == '+' {
-						user.Root = true
-					} else {
-						user.Root = false
-					}
-					chatIds[name] = user
-					if err := storage.SaveUser(user); err != nil {
-						panic(err)
-					}
-					continue
-				}
-			}
-
-			for _, user := range chatIds {
-				if user.ChatId != sendersChatId {
-					if user.Root {
-						forward := tgbotapi.NewForward(user.ChatId, sendersChatId, update.Message.MessageID)
-						if _, err := bot.Send(forward); err != nil {
-							log.Printf("user: %s either blocked the bot or error happened\n%v", user.Username, err)
-						}
-						continue
-					}
-					copy := tgbotapi.NewCopyMessage(user.ChatId, sendersChatId, update.Message.MessageID)
-					if _, err := bot.Send(copy); err != nil {
-						log.Printf("user: %s either blocked the bot or error happened\n%v", user.Username, err)
-					}
-				}
-			}
-		}
+	//Run the bot
+	if err := b.Run(); err != nil {
+		panic(err)
 	}
 }
