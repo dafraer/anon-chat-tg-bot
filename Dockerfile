@@ -8,4 +8,4 @@ RUN go mod download
 
 RUN go build -o adres-talk .
 
-CMD ["sh", "-c", "./adres-talk $TOKEN"]
+CMD ["sh", "-c", "./adres-talk $TOKEN $URI"]

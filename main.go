@@ -4,19 +4,28 @@ import (
 	store "adres-talk/storage"
 	"database/sql"
 	"log"
+	"net/url"
 	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
-
-	//Create storagee
-	connStr := "user=postgres dbname=postgres password=mysecretpassword sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
+	if len(os.Args) < 3 {
+		panic("Bot token and db uri expected as args")
 	}
+	//Create storagee
+	serviceURI := os.Args[2]
+
+	conn, _ := url.Parse(serviceURI)
+	conn.RawQuery = "sslmode=verify-ca;sslrootcert=ca.pem"
+
+	db, err := sql.Open("postgres", conn.String())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 	if err := db.Ping(); err != nil {
 		panic(err)
 	}
@@ -43,7 +52,7 @@ func main() {
 	u.Timeout = 60
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
-		if update.Message.IsCommand() {
+		if update.Message != nil && update.Message.IsCommand() {
 			if update.Message.Text == "/start" {
 				root := false
 				if update.Message.From.UserName == "dafraer" {
@@ -67,7 +76,7 @@ func main() {
 			sendersChatId := update.Message.Chat.ID
 
 			//check if the message is a command to give root privellege
-			if chatIds[update.Message.From.UserName].Root && update.Message.Text[0] == '*' {
+			if chatIds[update.Message.From.UserName].Root && len(update.Message.Text) > 3 && update.Message.Text[0] == '*' {
 				name := update.Message.Text[2:]
 				user, ok := chatIds[name]
 				if ok {
