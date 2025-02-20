@@ -6,6 +6,6 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o adres-talk .
+RUN go build -o bot .
 
-CMD ["sh", "-c", "./adres-talk $TOKEN $URI"]
+CMD ["sh", "-c", "./bot $TOKEN $DB_URI $ADMIN_ID"]

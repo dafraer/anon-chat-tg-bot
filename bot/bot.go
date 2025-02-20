@@ -59,12 +59,10 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) error {
 	for update := range updates {
 		switch {
 		case update.Message != nil && update.Message.IsCommand():
-			log.Printf("username: %s || userId: %d || chatId: %d\n", update.Message.From.UserName, update.Message.From.ID, update.Message.Chat.ID)
 			if err := b.handleCommands(update); err != nil {
 				return err
 			}
 		case update.Message != nil:
-			log.Printf("username: %s || userId: %d || chatId: %d\n", update.Message.From.UserName, update.Message.From.ID, update.Message.Chat.ID)
 			b.sendToAll(*update.Message)
 		}
 	}
