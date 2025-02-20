@@ -49,10 +49,10 @@ To run the bot, clone this repository and start it using either Go or Docker.
 
 2. **Run the container:**  
    ```sh
-   docker run -d --name chat-bot \
-     -e TOKEN=<your-bot-token> \
-     -e DB_URI=<your-database-uri> \
-     -e ADMIN_ID=<your-admin-id> \
+   docker run -d --name chat-bot 
+     -e TOKEN=<your-bot-token> 
+     -e DB_URI=<your-database-uri> 
+     -e ADMIN_ID=<your-admin-id> 
      anonymous-chat-bot
    ```  
 
@@ -72,7 +72,7 @@ go run main.go $TOKEN $DB_URI $ADMIN_ID
 - **DB_URI** – PostgreSQL connection string  
 - **ADMIN_ID** – The bot admin’s Telegram ID (Find yours via [@userinfobot](https://t.me/userinfobot))  
 
-
+---
 
 ## Features     
 
