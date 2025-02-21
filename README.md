@@ -36,7 +36,7 @@ This is a fun little Telegram bot that lets people chat anonymously. Messages ar
 
 ## Usage 
 
-To run the bot, clone this repository and start it using either Go or Docker.  
+To run the bot, start it using either Go or Docker.  
 
 ---
 
