@@ -12,7 +12,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data    
   bot:
-    #Make sure to change architecture to the one used on your machine
+    #Make sure to change architecture to amd64 if you are running on x86_64
     image: "dafraer/anon-chat-tg-bot:2.0-arm64"
     container_name: bot
     depends_on:

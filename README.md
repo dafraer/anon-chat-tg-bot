@@ -40,28 +40,27 @@ To run the bot, clone this repository and start it using either Go or Docker.
 
 ---
 
-### Run using Docker  
+### Run using Docker Compose 
 
-1. **Build the Docker image:**  
+1. **Download the docker-compose.yaml file**  
    ```sh
-   docker build -t anonymous-chat-bot .
+   wget https://raw.githubusercontent.com/dafraer/anon-chat-tg-bot/refs/heads/main/docker-compose.yaml
    ```  
 
-2. **Run the container:**  
-   ```sh
-   docker run -d --name chat-bot \
-   -e TOKEN=<your-bot-token> \
-   -e DB_URI=<your-database-uri> \
-   -e ADMIN_ID=<your-admin-id> \
-   anonymous-chat-bot
-   ```  
+2. **Set architechture and environmental variables**
+   - Replace `<your_telegram_bot_token>` and `<your_telegram_user_id>` with actual values.
+   - Set the image tag to `2.0-amd64` if you are running on x86_64
 
-   - The `-d` flag runs the container in detached mode.  
-   - Replace `<your-bot-token>`, `<your-database-uri>`, and `<your-admin-id>` with actual values.  
+3. **Run the command :**  
+   ```sh
+   sudo docker-compose up -d   
+   ```  
 
 ---
 
 ### Run using Go  
+
+To run with Go you will need to set up PostgreSQL database yourself. 
 
 ```sh
 go run main.go $TOKEN $DB_URI $ADMIN_ID
