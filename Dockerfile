@@ -6,6 +6,6 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o bot .
+RUN go build -o AnonBot .
 
-CMD ["sh", "-c", "./bot $TOKEN $DB_URI $ADMIN_ID"]
+CMD ["sh", "-c", "./AnonBot $TOKEN $DB_URI $ADMIN_ID"]

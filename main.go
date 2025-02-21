@@ -14,8 +14,6 @@ func main() {
 		panic("Bot token, db uri and admin telegram user id expected as args")
 	}
 	//Create storage
-	//default connection string for local postgres:
-	//"user=postgres dbname=postgres password=mysecretpassword sslmode=disable"
 	connStr := os.Args[2]
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
