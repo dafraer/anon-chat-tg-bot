@@ -49,11 +49,11 @@ To run the bot, clone this repository and start it using either Go or Docker.
 
 2. **Run the container:**  
    ```sh
-  docker run -d --name chat-bot \
-     -e TOKEN=<your-bot-token> \
-     -e DB_URI=<your-database-uri> \
-     -e ADMIN_ID=<your-admin-id> \
-     anonymous-chat-bot
+   docker run -d --name chat-bot \
+   -e TOKEN=<your-bot-token> \
+   -e DB_URI=<your-database-uri> \
+   -e ADMIN_ID=<your-admin-id> \
+   anonymous-chat-bot
    ```  
 
    - The `-d` flag runs the container in detached mode.  
